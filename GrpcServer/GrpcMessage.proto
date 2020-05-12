@@ -1,0 +1,22 @@
+﻿syntax = "proto3";
+
+option csharp_namespace = "GrpcLoad";
+
+package GrpcLoad;
+
+
+service GrpcMessage {
+  rpc GetData (Request) returns (Reply) {}
+}
+
+message Request {
+    string methodName = 1;
+}
+
+
+message Reply {
+	int32 status = 1;
+    string payload = 2;
+	string exceptionMessage = 3;
+}
+
