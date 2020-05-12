@@ -27,7 +27,7 @@ namespace GRPCLoadTest
     {
         public List<Timer> _queryPollTimer;
         public Channel _grpcchannel;
-        public bool _isCurrentlyRunning = false;
+
         public Poller()
         {
             _grpcchannel = new Channel("localhost", 9880, ChannelCredentials.Insecure, new List<ChannelOption>
@@ -50,21 +50,22 @@ namespace GRPCLoadTest
         {
             try
             {
-
                 List<Task> pollTasks = new List<Task>();
-
-                pollTasks.Add(RequestAsync().ContinueWith(task =>
+                foreach (var entry in _queryPollTimer)
                 {
-                    Reply result = task.Result;
-                    if (task.Exception != null)
-                        Console.WriteLine("Result Status :{0}", task.Exception);
-                    else
-                        Console.WriteLine("Result Status:{0}", "Success");
+                    
+                    pollTasks.Add(RequestAsync().ContinueWith(task =>
+                    {
+                        Reply result = task.Result;
+                        if (task.Exception != null)
+                            Console.WriteLine("Result Status :{0}", task.Exception);
+                        else
+                            Console.WriteLine("Result Status:{0}", "Success");
+                        
+                    }));
 
-                }));
-
+                }
                 await Task.WhenAll(pollTasks);
-
             }
             catch (Exception ex)
             {
